@@ -1,60 +1,67 @@
 package tech.bacuri.transito.api.controller;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tech.bacuri.transito.domain.exception.NegocioException;
 import tech.bacuri.transito.domain.model.Proprietario;
-import tech.bacuri.transito.domain.repository.ProprietarioRepository;
+import tech.bacuri.transito.domain.service.RegistroProprietarioService;
 
-import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/proprietarios")
 public class ProprietarioController {
 
-    private final ProprietarioRepository proprietarioRepository;
+    private final RegistroProprietarioService registroProprietarioService;
 
     @GetMapping
-    public List<Proprietario> listar() {
-        return proprietarioRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    public ResponseEntity<List<Proprietario>> listar() {
+        return ResponseEntity.ok(registroProprietarioService.listarTodos());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Proprietario> obter(@PathVariable(name = "id") Long id) {
-        return proprietarioRepository
-                .findById(id)
+        return registroProprietarioService.buscar(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Proprietario> salvar(@RequestBody Proprietario proprietario) {
-        Proprietario saved = proprietarioRepository.save(proprietario);
-        return ResponseEntity
-                .created(URI.create("/" + saved.getId()))
-                .body(saved);
+    public ResponseEntity<Proprietario> salvar(@Valid @RequestBody Proprietario proprietario) {
+        Proprietario saved = registroProprietarioService.salvar(proprietario);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Proprietario> atualizar(@PathVariable("id") Long id, @RequestBody Proprietario proprietario) {
-
-        if (!proprietarioRepository.existsById(id))
+    public ResponseEntity<Proprietario> atualizar(@PathVariable("id") Long id,
+                                                  @Valid @RequestBody Proprietario proprietario) {
+        if (!registroProprietarioService.existsById(id))
             return ResponseEntity.notFound().build();
 
         proprietario.setId(id);
 
-        return ResponseEntity.ok().body(proprietarioRepository.save(proprietario));
+        return ResponseEntity.ok().body(registroProprietarioService.atualizar(proprietario));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable(name = "id") Long id) {
-        if (!proprietarioRepository.existsById(id))
+        if (!registroProprietarioService.existsById(id))
             return ResponseEntity.notFound().build();
 
-        proprietarioRepository.deleteById(id);
+        registroProprietarioService.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @ExceptionHandler(NegocioException.class)
+    public ResponseEntity<Map<String, String>> capturar(NegocioException e) {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", e.getMessage());
+        return ResponseEntity.badRequest().body(body);
     }
 }
