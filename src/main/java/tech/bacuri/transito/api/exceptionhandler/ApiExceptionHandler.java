@@ -1,5 +1,8 @@
 package tech.bacuri.transito.api.exceptionhandler;
 
+import lombok.AllArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
@@ -17,8 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @RestControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
+    private MessageSource messageSource;
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
@@ -33,7 +38,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .getAllErrors()
                 .stream()
                 .map(objectError -> (FieldError) objectError)
-                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+                .collect(Collectors.toMap(FieldError::getField, fe -> messageSource.getMessage(fe, LocaleContextHolder.getLocale())));
 
         problemDetail.setProperty("fields", fields);
 
