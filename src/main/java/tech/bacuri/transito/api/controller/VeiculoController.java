@@ -1,15 +1,17 @@
 package tech.bacuri.transito.api.controller;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import tech.bacuri.transito.domain.exception.NegocioException;
 import tech.bacuri.transito.domain.model.Veiculo;
 import tech.bacuri.transito.domain.service.RegistroVeiculoService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -17,6 +19,12 @@ import java.util.List;
 public class VeiculoController {
 
     private final RegistroVeiculoService registroVeiculoService;
+
+
+    @PostMapping
+    public ResponseEntity<Veiculo> cadastrar(@Valid @RequestBody Veiculo veiculo) {
+        return new ResponseEntity<>(registroVeiculoService.cadastrar(veiculo), HttpStatus.CREATED);
+    }
 
     @GetMapping
     public ResponseEntity<List<Veiculo>> listar() {
@@ -28,5 +36,12 @@ public class VeiculoController {
         return registroVeiculoService.obter(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @ExceptionHandler(NegocioException.class)
+    public ResponseEntity<Map<String, String>> capturar(NegocioException e) {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", e.getMessage());
+        return ResponseEntity.badRequest().body(body);
     }
 }

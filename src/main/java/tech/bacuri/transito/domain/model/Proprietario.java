@@ -3,8 +3,10 @@ package tech.bacuri.transito.domain.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import tech.bacuri.transito.domain.validation.ValidationGroups;
 
 @Getter
 @Setter
@@ -15,6 +17,7 @@ import lombok.*;
 @Entity
 @Table(name = "proprietario")
 public class Proprietario {
+    @NotNull(groups = ValidationGroups.ProprietarioId.class)
     @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
