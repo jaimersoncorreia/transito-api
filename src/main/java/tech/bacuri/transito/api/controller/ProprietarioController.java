@@ -5,13 +5,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tech.bacuri.transito.domain.exception.NegocioException;
 import tech.bacuri.transito.domain.model.Proprietario;
 import tech.bacuri.transito.domain.service.RegistroProprietarioService;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -56,12 +53,5 @@ public class ProprietarioController {
 
         registroProprietarioService.deletar(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @ExceptionHandler(NegocioException.class)
-    public ResponseEntity<Map<String, String>> capturar(NegocioException e) {
-        Map<String, String> body = new HashMap<>();
-        body.put("message", e.getMessage());
-        return ResponseEntity.badRequest().body(body);
     }
 }
