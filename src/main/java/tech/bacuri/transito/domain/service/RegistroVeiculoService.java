@@ -8,7 +8,7 @@ import tech.bacuri.transito.domain.model.StatusVeiculo;
 import tech.bacuri.transito.domain.model.Veiculo;
 import tech.bacuri.transito.domain.repository.VeiculoRepository;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +28,7 @@ public class RegistroVeiculoService {
 
         veiculo.setProprietario(registroProprietarioService.obter(veiculo.getProprietario().getId()));
         veiculo.setStatus(StatusVeiculo.REGULAR);
-        veiculo.setDataCadastro(LocalDateTime.now());
+        veiculo.setDataCadastro(OffsetDateTime.now());
 
         return veiculoRepository.save(veiculo);
     }

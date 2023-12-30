@@ -10,7 +10,7 @@ import jakarta.validation.groups.ConvertGroup;
 import lombok.*;
 import tech.bacuri.transito.domain.validation.ValidationGroups;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -48,8 +48,8 @@ public class Veiculo {
     private StatusVeiculo status;
 
     @JsonProperty(access = Access.READ_ONLY)
-    private LocalDateTime dataCadastro;
+    private OffsetDateTime dataCadastro;
 
     @JsonProperty(access = Access.READ_ONLY)
-    private LocalDateTime dataApreensao;
+    private OffsetDateTime dataApreensao;
 }
