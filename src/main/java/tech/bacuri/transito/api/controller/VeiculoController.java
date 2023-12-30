@@ -2,6 +2,7 @@ package tech.bacuri.transito.api.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.List;
 public class VeiculoController {
 
     private final RegistroVeiculoService registroVeiculoService;
+    private final ModelMapper modelMapper;
 
 
     @PostMapping
@@ -32,7 +34,8 @@ public class VeiculoController {
     @GetMapping("/{id}")
     public ResponseEntity<VeiculoDto> obter(@PathVariable Long id) {
         return registroVeiculoService.obter(id)
-                .map(VeiculoDto::from)
+//                .map(VeiculoDto::from)
+                .map(veiculo -> modelMapper.map(veiculo, VeiculoDto.class))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
