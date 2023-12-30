@@ -3,10 +3,8 @@ package tech.bacuri.transito.api.exceptionhandler;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.*;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,7 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import tech.bacuri.transito.domain.exception.NegocioException;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -32,7 +29,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   WebRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
         problemDetail.setTitle("Um ou mais campos estão inválidos");
-        problemDetail.setType(URI.create("http://localhost:8080/erros"));
+        problemDetail.setType(URI.create("http://localhost:8080/ajuda/argumento-nao-validos"));
 
         Map<String, String> fields = ex.getBindingResult()
                 .getAllErrors()
@@ -46,9 +43,20 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NegocioException.class)
-    public ResponseEntity<Map<String, String>> capturar(NegocioException e) {
-        Map<String, String> body = new HashMap<>();
-        body.put("message", e.getMessage());
-        return ResponseEntity.badRequest().body(body);
+    public ProblemDetail handleNegocio(NegocioException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setTitle(e.getMessage());
+        problemDetail.setType(URI.create("http://localhost:8080/ajuda/regra-de-negocio"));
+        problemDetail.setDetail(e.fillInStackTrace().getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problemDetail.setTitle("Recurso está em uso");
+        problemDetail.setType(URI.create("http://localhost:8080/ajuda/recurso-em-uso"));
+        problemDetail.setDetail(e.getMessage());
+        return problemDetail;
     }
 }

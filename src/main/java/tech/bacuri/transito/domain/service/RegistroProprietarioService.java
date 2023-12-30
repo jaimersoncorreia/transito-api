@@ -62,7 +62,7 @@ public class RegistroProprietarioService {
 
     @Transactional
     public void deletar(Long id) {
-        if (existsById(id))
+        if (!existsById(id))
             throw new RuntimeException("Proprietário não encontrado!");
 
         proprietarioRepository.deleteById(id);
