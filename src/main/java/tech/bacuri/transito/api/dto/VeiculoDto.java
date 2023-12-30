@@ -15,7 +15,7 @@ public class VeiculoDto {
     @EqualsAndHashCode.Include
     private Long id;
 
-    private String proprietario;
+    private ProprietarioResumoDto proprietario;
 
     private String marca;
 
