@@ -23,7 +23,7 @@ public class Veiculo {
     @EqualsAndHashCode.Include
     @Id
     @SequenceGenerator(name = "veiculo", sequenceName = "sq_veiculo", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "proprietario")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "veiculo")
     private Long id;
 
     @Valid
