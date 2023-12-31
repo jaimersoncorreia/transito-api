@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import tech.bacuri.transito.domain.exception.ConflitoDeAtualizacaoException;
 import tech.bacuri.transito.domain.exception.EntidadeNaoEncontradaException;
 import tech.bacuri.transito.domain.exception.NegocioException;
 
@@ -57,6 +58,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problemDetail.setTitle(e.getMessage());
         problemDetail.setType(URI.create("http://localhost:8080/ajuda/entidade-nao-encontrada"));
+        problemDetail.setDetail(e.fillInStackTrace().getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(ConflitoDeAtualizacaoException.class)
+    public ProblemDetail handleConflitoDeAtualizacao(ConflitoDeAtualizacaoException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problemDetail.setTitle(e.getMessage());
+        problemDetail.setType(URI.create("http://localhost:8080/ajuda/conflito-de-atualizacao"));
         problemDetail.setDetail(e.fillInStackTrace().getMessage());
         return problemDetail;
     }

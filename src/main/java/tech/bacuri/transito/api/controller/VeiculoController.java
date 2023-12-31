@@ -9,6 +9,7 @@ import tech.bacuri.transito.api.assembler.VeiculoAssembler;
 import tech.bacuri.transito.api.dto.VeiculoDto;
 import tech.bacuri.transito.api.dto.input.VeiculoInput;
 import tech.bacuri.transito.domain.model.Veiculo;
+import tech.bacuri.transito.domain.service.ApreensaoVeiculoService;
 import tech.bacuri.transito.domain.service.RegistroVeiculoService;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class VeiculoController {
 
     private final RegistroVeiculoService registroVeiculoService;
     private final VeiculoAssembler veiculoAssembler;
+    private final ApreensaoVeiculoService apreensaoVeiculoService;
 
 
     @PostMapping
@@ -40,5 +42,17 @@ public class VeiculoController {
                 .map(veiculoAssembler::toDto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{veiculoId}/apreensao")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void apreender(@PathVariable Long veiculoId) {
+        apreensaoVeiculoService.apreender(veiculoId);
+    }
+
+    @DeleteMapping("/{veiculoId}/apreensao")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removerApreensao(@PathVariable Long veiculoId) {
+        apreensaoVeiculoService.removerApreensao(veiculoId);
     }
 }

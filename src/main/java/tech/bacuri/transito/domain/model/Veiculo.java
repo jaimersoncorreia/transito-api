@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.groups.ConvertGroup;
 import lombok.*;
-import tech.bacuri.transito.domain.exception.NegocioException;
+import tech.bacuri.transito.domain.exception.ConflitoDeAtualizacaoException;
 import tech.bacuri.transito.domain.validation.ValidationGroups;
 
 import java.time.OffsetDateTime;
@@ -69,7 +69,7 @@ public class Veiculo {
 
     public void apreender() {
         if (estaApreendido())
-            throw new NegocioException("Veículo já se encontra apreendido");
+            throw new ConflitoDeAtualizacaoException("Veículo já se encontra apreendido");
 
         setStatus(StatusVeiculo.APREENDIDO);
         setDataApreensao(OffsetDateTime.now());
@@ -77,7 +77,7 @@ public class Veiculo {
 
     public void removerApreensao() {
         if (naoEstaApreendido())
-            throw new NegocioException("Veículo não se encontra apreendido");
+            throw new ConflitoDeAtualizacaoException("Veículo não se encontra apreendido");
 
         setStatus(StatusVeiculo.REGULAR);
         setDataApreensao(null);
