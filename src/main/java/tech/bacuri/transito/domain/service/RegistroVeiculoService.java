@@ -1,6 +1,7 @@
 package tech.bacuri.transito.domain.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.bacuri.transito.domain.exception.EntidadeNaoEncontradaException;
@@ -35,7 +36,7 @@ public class RegistroVeiculoService {
     }
 
     public List<Veiculo> listar() {
-        return veiculoRepository.findAll();
+        return veiculoRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     public Optional<Veiculo> obter(Long id) {
