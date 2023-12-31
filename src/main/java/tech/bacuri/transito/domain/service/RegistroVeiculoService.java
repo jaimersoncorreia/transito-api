@@ -41,6 +41,12 @@ public class RegistroVeiculoService {
         return veiculoRepository.findById(id);
     }
 
+
+    public Veiculo buscar(Long veiculoId) {
+        return this.obter(veiculoId)
+                .orElseThrow(() -> new NegocioException("Veículo não encontrado!"));
+    }
+
     private boolean placaEmUso(Veiculo veiculo) {
         return veiculoRepository
                 .findByPlaca(veiculo.getPlaca())
