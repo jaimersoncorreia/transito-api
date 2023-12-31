@@ -1,6 +1,4 @@
-create
-sequence sq_autuacao start
-1 increment 1;
+create sequence sq_autuacao start 1 increment 1;
 
 create table autuacao
 (
