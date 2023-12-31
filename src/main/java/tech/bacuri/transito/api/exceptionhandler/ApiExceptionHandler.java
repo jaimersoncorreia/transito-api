@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import tech.bacuri.transito.domain.exception.EntidadeNaoEncontradaException;
 import tech.bacuri.transito.domain.exception.NegocioException;
 
 import java.net.URI;
@@ -47,6 +48,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setTitle(e.getMessage());
         problemDetail.setType(URI.create("http://localhost:8080/ajuda/regra-de-negocio"));
+        problemDetail.setDetail(e.fillInStackTrace().getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(EntidadeNaoEncontradaException.class)
+    public ProblemDetail handleEntidadeNaoEncontrada(EntidadeNaoEncontradaException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problemDetail.setTitle(e.getMessage());
+        problemDetail.setType(URI.create("http://localhost:8080/ajuda/entidade-nao-encontrada"));
         problemDetail.setDetail(e.fillInStackTrace().getMessage());
         return problemDetail;
     }

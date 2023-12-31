@@ -3,6 +3,7 @@ package tech.bacuri.transito.domain.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.bacuri.transito.domain.exception.EntidadeNaoEncontradaException;
 import tech.bacuri.transito.domain.exception.NegocioException;
 import tech.bacuri.transito.domain.model.StatusVeiculo;
 import tech.bacuri.transito.domain.model.Veiculo;
@@ -44,7 +45,7 @@ public class RegistroVeiculoService {
 
     public Veiculo buscar(Long veiculoId) {
         return this.obter(veiculoId)
-                .orElseThrow(() -> new NegocioException("Veículo não encontrado!"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Veículo não encontrado!"));
     }
 
     private boolean placaEmUso(Veiculo veiculo) {
